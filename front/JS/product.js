@@ -1,7 +1,8 @@
-/* RECUPERATION DE L'ID DU PRODUIT */ 
+//RECUPERATION DE L'ID DU PRODUIT  
 let idProduit = new URL(location.href).searchParams.get('id'); //On recuperer l'id grace au lien de la page (ajouter sur la page daccueil)
 console.log(idProduit);
 
+//Recuperation des infos produits et ajout a l'HTML
 fetch(`http://localhost:3000/api/products/${idProduit}`).then(function(result) {
 
     result.json().then(function(data) {
@@ -18,21 +19,16 @@ fetch(`http://localhost:3000/api/products/${idProduit}`).then(function(result) {
 
 
         for(let couleur of data.colors) {
-            /* let produitCouleur = document.createElement('option');
-            document.getElementById("colors").appendChild(produitCouleur);
-            produitCouleur.setAttribute("value" , `${couleur}`);
-            produitCouleur.innerHTML = couleur ; */
-
             document.getElementById("colors").innerHTML += `<option value="${couleur}">${couleur}</option>`;
         }
     })
 }).catch(function(error) { 
-    console.log('Erreur dans la récupération du produit')
+    alert('Erreur dans la récupération du produit')
 });
 
 
 
-
+//Fonction pour ajouter au localstorage 
 addToCart.onclick = () => {
 
     let objProduit = {
@@ -42,10 +38,10 @@ addToCart.onclick = () => {
     };
     console.log(objProduit);
 
-    if(objProduit.quantite <= 0 || objProduit.quantite>100 ) //Verif si la quantite selectionne est bonne 
+    if(objProduit.quantite <= 0 || objProduit.quantite>100 ) //Verif si la quantite selectionne est bonne (Entre 1 et 100)
     return alert('Choisir une quantité') ;
     
-    if(objProduit.couleur == "") //Verif si une couleur est selectionne
+    if(objProduit.couleur == "") //Verif si une couleur est selectionne 
     return alert('Choisir une couleur');
 
     let panierActuel = JSON.parse(localStorage.getItem("panier"));  /* Retourne true si le localstorage a deja des elems donc applique le if */ 
@@ -56,14 +52,12 @@ addToCart.onclick = () => {
         // Test pour savoir si le produit est deja present dans le panier 
         let rechercheProduit = panierActuel.findIndex(x => x.id == objProduit.id && x.couleur == objProduit.couleur); //Renvoie -1 si rien trouver 
 
-        if(rechercheProduit !== -1 ) {
+        if(rechercheProduit !== -1 ) { //Si recheche produit renvoie autre chose que -1 donc un produit est present
             console.log(panierActuel[rechercheProduit].quantite);
             console.log(objProduit.quantite);
-            // panierActuel[rechercheProduit].quantite += parseInt(objProduit.quantite); // Additionne les deux quantites (parseInt car le nbr est une chaine de caractere de base)
-            // panierActuel[rechercheProduit].quantite = parseInt(objProduit.quantite) + parseInt(panierActuel[rechercheProduit].quantite);
             panierActuel[rechercheProduit].quantite += objProduit.quantite;
             console.log(panierActuel[rechercheProduit].quantite);
-            localStorage.setItem("panier" , JSON.stringify(panierActuel));
+            localStorage.setItem("panier" , JSON.stringify(panierActuel)); //MAJ Localstorage
         }else{
             //Si panier deja creer mais nv produit  
             panierActuel.push(objProduit);
