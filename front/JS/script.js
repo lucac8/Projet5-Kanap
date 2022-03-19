@@ -1,9 +1,7 @@
-//Récupération de données provenant de différents produits et affichage de celles-ci
+//Récupération des infos des différents produits et affichage de celles-ci
 fetch('http://localhost:3000/api/products').then(function(result) {
 
     result.json().then(function(data) {
-        console.log(data);
-
         let htmlContent = "";
 
         for (let produits of data) {
